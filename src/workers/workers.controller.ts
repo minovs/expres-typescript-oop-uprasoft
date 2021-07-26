@@ -1,24 +1,24 @@
-import { JsonController, Get, Params } from 'routing-controllers'
+import { JsonController, Get, Params, UseBefore, Req, Res } from 'routing-controllers'
 import { WorkersService } from './workers.service'
+import { AuthMiddleware } from '../middlewers/auth.middleware'
+import { ParamsType } from '../types/types'
 import 'reflect-metadata'
 
-type WorkersParamsType = {
-  date: string
-}
-
 @JsonController('/workers')
+@UseBefore(AuthMiddleware)
 export class WorkersController {
   constructor(private readonly workersService: WorkersService) {
     this.workersService = new WorkersService()
   }
 
   @Get('/:date')
-  async getAll(@Params() { date }: WorkersParamsType) {
+  async getAll(@Req() req: any, @Res() res: any, @Params() { date }: ParamsType) {
     try {
-      const result = await this.workersService.getAll(date)
-      return JSON.stringify(result)
+      const { alfirm, parent_id, id_log } = req.user
+      const result = await this.workersService.getAll(alfirm, parent_id, id_log, date)
+      return res.json(result)
     } catch (e) {
-      console.log(e)
+      throw e
     }
   }
 }

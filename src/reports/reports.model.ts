@@ -13,7 +13,7 @@ class ReportsModel {
       const [rows] = await connection.execute(msQuery, [date, id])
       return rows
     } catch (e) {
-      console.log(e)
+      throw e
     }
   }
 }

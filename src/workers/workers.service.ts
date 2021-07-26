@@ -1,58 +1,33 @@
 import WorkersModel from './workers.model'
-import AppService from '../app.service'
+import BuildTree from '../services/tree.service'
 
 export class WorkersService {
-  async getAll(date: string) {
-    const alias = 'upk'
-    const userGroup: string = '0'
-    const userSingl: string = '0'
-
+  async getAll(alfirm: string, parent_id: number, id_log: number, date: string) {
     const dateSotr = new Intl.DateTimeFormat('ru-RU')
       .format(+date)
       .split('.')
       .reverse()
       .join('')
 
-    let checResult = []
     try {
-      checResult = await WorkersModel.checTree(alias)
-    } catch (e) {
-      console.log(e)
-    }
-
-    if (checResult.length > 0) {
-      if (userGroup === '0') {
-        try {
-          const data = await WorkersModel.getWorkersForTree(alias, dateSotr)
-          return await AppService.buildTree(data)
-        } catch (e) {
-          console.log(e)
+      let checResult = []
+      checResult = await WorkersModel.checTree(alfirm)
+      if (checResult.length > 0) {
+        if (parent_id === 0) {
+          const data = await WorkersModel.getWorkersForTree(alfirm, dateSotr)
+          return await BuildTree.tree(data)
+        } else if (id_log === 0) {
+          return await WorkersModel.getWorkers(alfirm, dateSotr, parent_id)
+        } else {
+          return await WorkersModel.getWorker(alfirm, dateSotr, id_log)
         }
-      } else if (userSingl === '0') {
-        try {
-          return await WorkersModel.getWorkers(alias, dateSotr, userGroup)
-        } catch (e) {
-          console.log(e)
-        }
+      } else if (id_log === 0) {
+        return await WorkersModel.getWorkers(alfirm, dateSotr, 0)
       } else {
-        try {
-          return await WorkersModel.getWorker(alias, dateSotr, userSingl)
-        } catch (e) {
-          console.log(e)
-        }
+        return await WorkersModel.getWorker(alfirm, dateSotr, id_log)
       }
-    } else if (userSingl === '0') {
-      try {
-        return await WorkersModel.getWorkers(alias, dateSotr, '0')
-      } catch (e) {
-        console.log(e)
-      }
-    } else {
-      try {
-        return await WorkersModel.getWorker(alias, dateSotr, userSingl)
-      } catch (e) {
-        console.log(e)
-      }
+    } catch (e) {
+      throw e
     }
   }
 }

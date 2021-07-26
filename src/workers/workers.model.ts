@@ -9,7 +9,9 @@ class WorkersModel {
       const connection = await Db.connectDb()
       const [rows] = await connection.execute(msQuery)
       return rows
-    } catch (e) {}
+    } catch (e) {
+      throw e
+    }
   }
   getWorkersForTree = async (alias: string, date: string): Promise<RowDataPacket[string]> => {
     const tableSotrs = `${alias}sotrs`
@@ -26,11 +28,11 @@ class WorkersModel {
       const [rows] = await connection.execute(msQuery, [date, date])
       return rows
     } catch (e) {
-      console.log(e)
+      throw e
     }
   }
 
-  getWorkers = async (alias: string, date: string, userGroup: string): Promise<RowDataPacket[string]> => {
+  getWorkers = async (alias: string, date: string, userGroup: number): Promise<RowDataPacket[string]> => {
     const tableSotrs = `${alias}sotrs`
     const tableAnalisis = `${alias}analisis`
     const tableDist = `${alias}dist`
@@ -46,11 +48,11 @@ class WorkersModel {
       const [rows] = await connection.execute(msQuery, [date, date, userGroup])
       return rows
     } catch (e) {
-      console.log(e)
+      throw e
     }
   }
 
-  getWorker = async (alias: string, date: string, userSingl: string): Promise<RowDataPacket[string]> => {
+  getWorker = async (alias: string, date: string, userSingl: number): Promise<RowDataPacket[string]> => {
     const tableSotrs = `${alias}sotrs`
     const tableAnalisis = `${alias}analisis`
     const tableDist = `${alias}dist`
@@ -68,7 +70,7 @@ class WorkersModel {
       const [rows] = await connection.execute(msQuery, [date, userSingl, date, userSingl, userSingl])
       return rows
     } catch (e) {
-      console.log(e)
+      throw e
     }
   }
 }
