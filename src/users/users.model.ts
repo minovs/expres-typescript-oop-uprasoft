@@ -58,7 +58,7 @@ class UsersModel {
   }
 
   logout = async (refreshToken: string) => {
-    const msQuery = `DELETE FROM WHERE token=?`
+    const msQuery = `DELETE FROM tokensstor WHERE token=?`
     try {
       const connection = await Db.connectDb()
       const [rows] = await connection.execute(msQuery, [refreshToken])
